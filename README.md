@@ -4,7 +4,7 @@ CS 461 - Artificial Intelligence: Term Project which is about natural language p
 
 Main Ideas: Topic Modelling, Sentiment Analysis, Text Classification.
 
-I use Python. pulling data out of HTML a library called BeautifulSoup.
+I use Python 3.X. for parsing HTML to text I use a library called BeautifulSoup.
 
 I'm currently working on extracting text from HTML. I found out that it's pretty challenging to create a generic way to do it. 
 
