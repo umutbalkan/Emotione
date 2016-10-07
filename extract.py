@@ -1,25 +1,41 @@
-import requests
+import urllib
 from bs4 import BeautifulSoup
 import operator
-
-# break up into 3 functions
-# find all words it use(a list of every single word)
 
 
 # Extracts words from HTML page to text
 def start(url):
-    word_list = []
-    source_code = requests.get(url).text
-    soup = BeautifulSoup(source_code, "html.parser")
-    for title_text in soup.findAll('a', {'class': 'hdrlnk'}):
-        content = title_text.string
-        words = content.lower().split()
-        #print (words) # Splitted text containing all of the words
-        for each_word in words:
-            word_list.append(each_word)
+	word_list = []
+	html = urllib.urlopen(url).read()
+	soup = BeautifulSoup(html, "html.parser")
 
-    #print (soup.findAll('div', {'class': 'content__article-body from-content-api js-article__body'}))
-    clean_up_list(word_list) # Calls next function
+	# kill all script and style elements
+	for script in soup(["script", "style"]):
+		script.extract()		
+
+	# get text
+	text = soup.get_text()
+
+
+	# break into lines and remove leading and trailing space on each
+	lines = (line.strip() for line in text.splitlines())
+	# break multi-headlines into a line each
+	chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+	# drop blank lines
+	text = '\n'.join(chunk for chunk in chunks if chunk)
+
+	#print  "#*****************#" + "\nHTML to TEXT conversion of given URL" + '\n"#*****************#"'
+	print (text)
+
+	# get words from TEXT
+	#for word in text:
+	#	words = word.lower()
+	#	word_list.append(words)
+		#for each_word in words:
+		#	word_list.append(each_word)
+
+	print word_list
+	#clean_up_list(word_list) # Calls next function
 
 # Cleans word list from unsignificant symbols and words.
 def clean_up_list(word_list):
@@ -41,7 +57,7 @@ def clean_up_list(word_list):
 
 # Creates key-value pairs of each word
 def create_dictionary(clean_word_list):
-    word_count = {}     # declaration of dictionary data type
+    word_count  = {}     # declaration of dictionary data type
     
     # This loop simply calculates the frequency of each word
     for word in clean_word_list:
@@ -50,9 +66,10 @@ def create_dictionary(clean_word_list):
         else:
             word_count[word] = 1
 
+    print "#*****************#" + "\nWord Frequency" + "\n#*****************#"
     # sort & display it on the screen by ascending order.
-    #for key, value in sorted(word_count.items(), key=operator.itemgetter(1)):
-    #    print(value, key)
+    for key, value in sorted(word_count.items(), key=operator.itemgetter(1)):
+        print(value, key)
 
 
 # HTML page for processing
